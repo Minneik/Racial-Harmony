@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Treasure Hunt Puzzle</title>
+  <style>
+    body { font-family: Arial, sans-serif; text-align: center; }
+    img { max-width: 100px; margin: 5px; }
+    .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px; justify-items: center; }
+  </style>
+</head>
+<body>
+  <h1>Treasure Hunt Puzzle</h1>
+  <p>Scan the QR to unlock a random puzzle piece!</p>
+  <div id="puzzle" class="grid"></div>
+  <p id="status"></p>
+
+  <script>
+    // List of all pieces
+    const pieces = [
+      "row-1-column-1.png",
+      "row-1-column-2.png",
+      "row-1-column-3.png",
+      "row-2-column-1.png",
+      "row-2-column-2.png",
+      "row-2-column-3.png",
+      "row-3-column-1.png",
+      "row-3-column-2.png",
+      "row-3-column-3.png"
+    ];
+
+    // Load saved pieces from localStorage
+    let collected = JSON.parse(localStorage.getItem("collectedPieces")) || [];
+
+    // Pick a new random piece (not already collected)
+    const remaining = pieces.filter(p => !collected.includes(p));
+    if (remaining.length > 0) {
+      const newPiece = remaining[Math.floor(Math.random() * remaining.length)];
+      collected.push(newPiece);
+      localStorage.setItem("collectedPieces", JSON.stringify(collected));
+    }
+
+    // Display all collected pieces in a grid
+    const puzzleDiv = document.getElementById("puzzle");
+    pieces.forEach(p => {
+      const img = document.createElement("img");
+      img.src = collected.includes(p) ? p : "images/blank.png"; // use a blank placeholder if not collected
+      puzzleDiv.appendChild(img);
+    });
+
+    // Show status
+    document.getElementById("status").innerText =
+      `Collected ${collected.length} / ${pieces.length} pieces`;
+
+    if (collected.length === pieces.length) {
+      document.getElementById("status").innerText += " 🎉 Puzzle Completed!";
+    }
+  </script>
+</body>
+</html>
